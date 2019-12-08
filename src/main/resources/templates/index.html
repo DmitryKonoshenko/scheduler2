@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="fragments/header :: header('Scheduler Home')"/>
+<body>
+<div id="root" class="container">
+    <div th:replace="fragments/nav :: nav"></div>
+<!--    <p id="loggedin">{{userlogin.username}}</p>-->
+    <div class="container">
+        <div class="row">
+            <div class="twelve columns">
+                <h1>Scheduler</h1>
+                <ul>
+                    <li v-for="user in users">
+                        <h3>{{user.username}}</h3>
+                        <p>{{user.firstName}}</p>
+                        <p>{{user.lastName}}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<script src="/js/main.js"></script>-->
+</body>
+<div th:replace="fragments/footer :: foot"></div>
+<script>
+    var app = new Vue({
+        el: "#root",
+        data: {users: []},
+        mounted() {
+            this.fetchUsers();
+        },
+        methods: {
+            fetchUsers() {
+                axios.get("/users").then(function (response) {
+                    this.users = response.data;
+                }.bind(this));
+            }
+        }
+    });
+
+    // var vueLog = new Vue({
+    //     el: "#loggedin",
+    //     data: {userlogin: []},
+    //     mounted() {
+    //         this.fetchLogin();
+    //     },
+    //     methods: {
+    //         fetchLogin() {
+    //             if (getCookie("token") != null) {
+    //                 axios.get("/getUserName", {
+    //                     params: {},
+    //                     headers: {'Authorization': "Bearer_" + getCookie("token")}
+    //                 })
+    //                     .then(function (response) {
+    //                         this.userlogin = response.data;
+    //                     }.bind(this))
+    //                     .catch(function (error) {
+    //                         // delete_cookie("token");
+    //                     })
+    //             }
+    //         }
+    //     }
+    // });
+</script>
+</html>
