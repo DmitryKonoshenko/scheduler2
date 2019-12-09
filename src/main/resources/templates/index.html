@@ -1,11 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head th:replace="fragments/header :: header('Scheduler Home')"/>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8"/>
+<title th:text="Sheduler"></title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"/>
+<link rel="stylesheet" href="css/style.css"/>
 <body>
 <div id="root" class="container">
-    <div th:replace="fragments/nav :: nav"></div>
-<!--    <p id="loggedin">{{userlogin.username}}</p>-->
-    <div class="container">
+    <div class="row">
+        <div class="twelve columns">
+            <ul class="navMenu">
+                <li><a href="/login" v-if="profile">Выйти</a></li>
+                <li><a type="submit" v-on:click="logout" value="Выйти"/></li>
+            </ul>
+        </div>
+                <p id="loggedin">{{profile}}</p>
+    </div>
+    <div class="container" v-if="profile">
         <div class="row">
             <div class="twelve columns">
                 <h1>Scheduler</h1>
@@ -19,48 +29,22 @@
             </div>
         </div>
     </div>
+    <div class="container" v-else>
+        <div class="row">
+            <div class="twelve columns">
+                <h4 id="loginHeader">Login</h4>
+                <div class="six columns align-center">
+                    <label for="username">Username</label>
+                    <input v-model="username" class="u-full-width" type="text" placeholder="yourUsername"
+                           id="username"/>
+                    <label for="password">Password</label>
+                    <input v-model="password" class="u-full-width" type="password" id="password"/>
+                    <input class="u-full-width button-primary" type="submit" v-on:click="login" value="Submit"/>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<!--<script src="/js/main.js"></script>-->
 </body>
 <div th:replace="fragments/footer :: foot"></div>
-<script>
-    var app = new Vue({
-        el: "#root",
-        data: {users: []},
-        mounted() {
-            this.fetchUsers();
-        },
-        methods: {
-            fetchUsers() {
-                axios.get("/users").then(function (response) {
-                    this.users = response.data;
-                }.bind(this));
-            }
-        }
-    });
-
-    // var vueLog = new Vue({
-    //     el: "#loggedin",
-    //     data: {userlogin: []},
-    //     mounted() {
-    //         this.fetchLogin();
-    //     },
-    //     methods: {
-    //         fetchLogin() {
-    //             if (getCookie("token") != null) {
-    //                 axios.get("/getUserName", {
-    //                     params: {},
-    //                     headers: {'Authorization': "Bearer_" + getCookie("token")}
-    //                 })
-    //                     .then(function (response) {
-    //                         this.userlogin = response.data;
-    //                     }.bind(this))
-    //                     .catch(function (error) {
-    //                         // delete_cookie("token");
-    //                     })
-    //             }
-    //         }
-    //     }
-    // });
-</script>
 </html>

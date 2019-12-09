@@ -1,6 +1,7 @@
 package com.divanxan.scheduler2.rest;
 
 import com.divanxan.scheduler2.model.User;
+import com.divanxan.scheduler2.security.jwt.JwtTokenProvider;
 import com.divanxan.scheduler2.service.UserService;
 import com.divanxan.scheduler2.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,25 +13,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/v1/users/")
+@RequestMapping(value = "/users/")
 public class UserRestControllerV1 {
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserRestControllerV1(UserService userService) {
+    public UserRestControllerV1(UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @GetMapping(value = "{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id){
-        User user = userService.findById(id);
+    @GetMapping(value = "{token}")
+    public ResponseEntity<String> getUserById(@PathVariable(name = "token") String token){
+        String userName = jwtTokenProvider.getUsername(token);
 
-        if(user == null){
+        if(userName == null){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        UserDto result = UserDto.fromUser(user);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(userName, HttpStatus.OK);
     }
 }
