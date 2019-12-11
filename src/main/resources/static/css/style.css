@@ -15,6 +15,11 @@ li {
     padding-top: 2em;
 }
 
+#RegistrationHeader{
+    text-align: center;
+    padding-top: 2em;
+}
+
 .align-center{
     float:none;
     margin: 0 auto;

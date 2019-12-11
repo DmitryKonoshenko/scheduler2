@@ -17,45 +17,113 @@ var app = new Vue({
     data: {
         users: [],
         username: '',
+        firstName: '',
+        secondName: '',
+        email: '',
         password: '',
-        profile: ''
+        pass2: '',
+        profile: '',
+        loginForm: false,
+        regForm: false,
+        loginMessage: ''
     },
     mounted() {
         this.fetchUsers();
     },
     methods: {
         fetchUsers() {
-            axios.get("/users").then(function (response) {
-                this.users = response.data;
-            }.bind(this));
+            if (this.profile !== '') {
+                axios.get("/users").then(function (response) {
+                    this.users = response.data;
+                }.bind(this));
+            }
         },
         login() {
-            axios.post('api/v1/auth/login', {
+            let request = new XMLHttpRequest();
+            request.open('POST', 'api/v1/auth/login', false);
+            request.setRequestHeader('Content-Type', 'application/json');
+            let body = {
                 "username": this.username,
                 "password": this.password
-            })
-                .then(function (response) {
-                    set_cookie("token", response.data.token);
-                    document.location.replace("/");
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+            };
+            let json = JSON.stringify(body);
+            request.send(json);
+            let response = JSON.parse(request.responseText);
+            if (response.token != null) {
+                this.loginForm = false;
+                this.regForm = false;
+                set_cookie("token", response.token);
+                this.profile = response.username;
+                console.log(response.username);
+            }
+            this.fetchUsers();
         },
-        logout(){
+        logout() {
+            this.loginMessage = '';
             delete_cookie("token");
             document.location.replace("/");
+        },
+        registrationPrepare() {
+            this.loginForm = false;
+            this.regForm = true;
+            // document.location.replace("/");
+        }
+        ,
+        registration() {
+            if (this.password === this.pass2) {
+                let request = new XMLHttpRequest();
+                request.open('POST', '/users/register', false);
+                request.setRequestHeader('Content-Type', 'application/json');
+                let body = {
+                    "username": this.username,
+                    "firstName": this.firstName,
+                    "secondName": this.secondName,
+                    "email": this.email,
+                    "password": this.password,
+                };
+                let json = JSON.stringify(body);
+                request.send(json);
+                if (request.responseText === "true") {
+                    this.loginMessage = "Вы успешно зарегестрированы.";
+                    this.regForm = false;
+                    this.loginForm = true;
+                } else {
+                    this.loginMessage = "Что-то пошло не так. Попробуйте снова";
+                }
+
+                // axios.post('/users/register', {
+                //     "username": this.username,
+                //     "firstName": this.firstName,
+                //     "secondName": this.secondName,
+                //     "email": this.email,
+                //     "password": this.password,
+                // }).then(function (response) {
+                //     if(response.data.register === true){
+                //     this.loginMessage = "Вы успешно зарегестрированы.";
+                //     this.regForm = false;
+                //     this.loginForm = true;
+                //     }else{
+                //         this.loginMessage = "Что-то пошло не так. Попробуйте снова";
+                //     }
+                // }).catch(function (error) {
+                //     console.log(error);
+                // });
+            } else {
+                this.loginMessage = "Пароли не совпадают";
+            }
+            console.log("keck keck");
         }
     },
     created: function() {
        let token = getCookie("token");
-       if(token){
-           let addr = "/users/"+token;
-           var request = new XMLHttpRequest();
+       if(token && token.length<64){
+           let addr = "/users/" + token;
+           let request = new XMLHttpRequest();
            request.open('GET',addr,false);
            request.send();
            console.log(request.status);
            this.profile = request.responseText;
        }
+        this.loginForm = true;
     }
 });

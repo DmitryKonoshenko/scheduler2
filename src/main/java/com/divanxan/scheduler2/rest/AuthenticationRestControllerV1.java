@@ -38,7 +38,7 @@ public class AuthenticationRestControllerV1 {
     }
 
     @PostMapping("login")
-    public ResponseEntity login(Model model, @RequestBody AuthenticationRequestDto requestDto) {
+    public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
         try {
             String username = requestDto.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
@@ -54,9 +54,6 @@ public class AuthenticationRestControllerV1 {
             response.put("username", username);
             response.put("token", token);
 
-            HashMap<Object, Object> data = new HashMap<>();
-            data.put("profile", user);
-            model.addAttribute("frontendData", data);
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid username or password");
