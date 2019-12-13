@@ -1,11 +1,11 @@
 package com.divanxan.scheduler2.service.impl;
 
-import com.divanxan.scheduler2.service.UserService;
-import com.divanxan.scheduler2.model.Role;
-import com.divanxan.scheduler2.model.Status;
-import com.divanxan.scheduler2.model.User;
+import com.divanxan.scheduler2.model.*;
 import com.divanxan.scheduler2.repository.RoleRepository;
 import com.divanxan.scheduler2.repository.UserRepository;
+import com.divanxan.scheduler2.repository.WorkDatesDesiredRepository;
+import com.divanxan.scheduler2.repository.WorkDatesRepository;
+import com.divanxan.scheduler2.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,12 +22,17 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final WorkDatesRepository datesRepository;
+    private final WorkDatesDesiredRepository datesDesiredRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder
+            , WorkDatesRepository datesRepository, WorkDatesDesiredRepository datesDesiredRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.datesRepository = datesRepository;
+        this.datesDesiredRepository = datesDesiredRepository;
     }
 
     @Override
@@ -77,8 +82,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<WorkDates> findDaysById(Long id) {
+        List<WorkDates> dates = datesRepository.findAll();
+        List<WorkDates> result = new ArrayList<>();
+        for (WorkDates date : dates) {
+            if (date.getUserId().equals(id)) {
+                result.add(date);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<WorkDatesDesired> findDesiredDaysById(Long id) {
+        List<WorkDatesDesired> dates = datesDesiredRepository.findAll();
+        List<WorkDatesDesired> result = new ArrayList<>();
+        for (WorkDatesDesired date : dates) {
+            if (date.getUserId().equals(id)) {
+                result.add(date);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
         log.info("IN delete - user with id: {} successfully deleted");
+    }
+
+    @Override
+    public void deleteDate(Long id){
+        datesDesiredRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean addDate(WorkDatesDesired date) {
+        date.setCreated(LocalDateTime.now());
+        date.setUpdated(LocalDateTime.now());
+        date.setStatus(Status.ACTIVE);
+        datesDesiredRepository.save(date);
+        return true;
     }
 }

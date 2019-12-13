@@ -13,7 +13,6 @@ public class WorkDates extends BaseEntity {
     @Column(name = "datework")
     private LocalDate date;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id")
+    private Long userId;
 }

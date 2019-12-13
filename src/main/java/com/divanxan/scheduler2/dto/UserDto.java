@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -17,8 +18,8 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String email;
-    private Set<WorkDates> workDates = new HashSet<>();
-    private Set<WorkDatesDesired> workDatesDesireds = new HashSet<>();
+    private List<WorkDates> workDates;
+    private List<WorkDatesDesired> workDatesDesireds;
 
     public User toUser(){
         User user = new User();
@@ -27,20 +28,18 @@ public class UserDto {
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
-        user.setWorkDates(workDates);
-        user.setWorkDatesDesireds(workDatesDesireds);
         return user;
     }
 
-    public static UserDto fromUser(User user) {
+    public static UserDto fromUser(User user, List<WorkDates> workDates, List<WorkDatesDesired> workDatesDesireds) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
-        userDto.setWorkDates(user.getWorkDates());
-        userDto.setWorkDatesDesireds(user.getWorkDatesDesireds());
+        userDto.setWorkDates(workDates);
+        userDto.setWorkDatesDesireds(workDatesDesireds);
 
         return userDto;
     }

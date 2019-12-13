@@ -1,5 +1,6 @@
 package com.divanxan.scheduler2.rest;
 
+import com.divanxan.scheduler2.dto.AuthenticationRequestDto;
 import com.divanxan.scheduler2.dto.UserDto;
 import com.divanxan.scheduler2.model.User;
 import com.divanxan.scheduler2.service.UserService;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +46,7 @@ public class HomeController {
         }
         List<UserDto> usersDto = new ArrayList<>();
         for (User user: users) {
-            UserDto result = UserDto.fromUser(user);
+            UserDto result = UserDto.fromUser(user, null, null);
             usersDto.add(result);
         }
 

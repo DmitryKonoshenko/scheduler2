@@ -6,62 +6,6 @@
 <link rel="stylesheet" href="css/style.css"/>
 <body>
 <div id="root" class="container">
-    <div class="row">
-        <div class="twelve columns">
-            <ul class="navMenu">
-<!--                <li><a href="/login" v-if="profile">Выйти</a></li>-->
-                <li><p id="loggedin">{{profile}}</p></li>
-                <li><input v-if="profile" class="u-full-width button-primary" type="submit" v-on:click="logout" value="Выйти"/></li>
-            </ul>
-        </div>
-    </div>
-    <p v-if="loginMessage">{{loginMessage}}</p>
-    <div class="container" v-if="profile">
-        <div class="row">
-            <div class="twelve columns">
-                <h1>Scheduler</h1>
-                <ul>
-                    <li v-for="user in users">
-                        <h3>{{user.username}}</h3>
-                        <p>{{user.firstName}}</p>
-                        <p>{{user.lastName}}</p>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="container" v-if="loginForm">
-        <div class="row">
-            <div class="twelve columns">
-                <h4 id="loginHeader">Вход</h4>
-                <div class="six columns align-center">
-                    <label for="username">Имя пользователя</label>
-                    <input v-model="username" class="u-full-width" type="text" placeholder="yourUsername"
-                           id="username"/>
-                    <label for="password">Пароль</label>
-                    <input v-model="password" class="u-full-width" type="password" id="password"/>
-                    <input class="u-full-width button-primary" type="submit" v-on:click="login" value="Войти"/>
-                    <input class="u-full-width button-primary" type="submit" v-on:click="registrationPrepare" value="Регистрация"/>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container" v-if="regForm">
-        <div class="row">
-            <div class="twelve columns">
-                <h4 id="RegistrationHeader">Регистрация</h4>
-                <div class="six columns align-center">
-                    <input v-model="username" class="u-full-width" type="text" placeholder="Имя" id="логин"/>
-                    <input v-model="firstName" class="u-full-width" type="text" placeholder="Имя" id="regFirstName"/>
-                    <input v-model="secondName" class="u-full-width" type="text" placeholder="Фамилия" id="regSecondName"/>
-                    <input v-model="email" class="u-full-width" type="text" placeholder="электронная почта" id="email"/>
-                    <input v-model="password" class="u-full-width" type="password" placeholder="введите пароль" id="pass1"/>
-                    <input v-model="pass2" class="u-full-width" type="password" placeholder="повторите пароль" id="pass2"/>
-                    <input class="u-full-width button-primary" type="submit" v-on:click="registration" value="Submit"/>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 </body>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
