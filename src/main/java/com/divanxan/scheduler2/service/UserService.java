@@ -15,6 +15,7 @@ public interface UserService {
     User register(User user);
 
     List<User> getAll();
+
     List<UserDto> getAllDto();
 
     User findByUsername(String username);
@@ -23,12 +24,19 @@ public interface UserService {
 
     void delete(Long id);
 
+    void philUpScheduler(List<UserDto> data);
+
     List<WorkDates> findDaysById(Long id);
+
     List<WorkDatesDto> findDaysDtoById(Long id);
+
     List<Car> findAllCars();
+
     List<CarDto> findAllCarsDto();
+
     List<WorkDatesDesired> findDesiredDaysById(Long id);
 
     void deleteDate(Long id);
+
     boolean addDate(WorkDatesDesired date);
 }

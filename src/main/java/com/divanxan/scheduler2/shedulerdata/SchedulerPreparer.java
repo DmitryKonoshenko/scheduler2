@@ -5,25 +5,17 @@ import com.divanxan.scheduler2.dto.UserDto;
 import com.divanxan.scheduler2.dto.WorkDatesDto;
 import com.divanxan.scheduler2.model.Duty;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SchedulerPreparer {
 
 
-    public static List<List<SchedulerData>> createScheduler(List<List<SchedulerData>> data, List<UserDto> users, List<CarDto> cars) {
+    public static List<UserDto> createScheduler(List<List<SchedulerData>> data, List<UserDto> users, List<CarDto> cars) {
 
         //TODO забить на копии
-        List<UserDto> specialUserMain = users.stream().filter(p -> p.getDuty().equals(Duty.DOCTOR)).sorted().collect(Collectors.toList());
-        List<UserDto> specialUser = new ArrayList<>();
-        for (UserDto usDto: specialUserMain) {
-            UserDto u1 = new UserDto(usDto);
-            specialUser.add(u1);
-        }
+        List<UserDto> specialUser = users.stream().filter(p -> p.getDuty().equals(Duty.DOCTOR)).sorted().collect(Collectors.toList());
 
         while (!specialUser.isEmpty()) {
             if (!specialUser.get(0).getWorkDatesDesireds().isEmpty()) addData(data, specialUser.get(0), cars);
@@ -34,7 +26,7 @@ public class SchedulerPreparer {
         phillData(data, users, cars);
         List<SchedulerData> emptyData;
 
-        emptyData = getSchedulerData(data);
+//        emptyData = getSchedulerData(data);
 
         List<UserDto> listEraser = new ArrayList<>();
         boolean end = false;
@@ -43,10 +35,30 @@ public class SchedulerPreparer {
             end = true;
             emptyData = getSchedulerData(data);
             //TODO выбрать правильную замену
-            eraseData(data, users, emptyData, listEraser);
+            for (SchedulerData noData : emptyData) {
+                Map<Long, WorkDatesDto> map = new HashMap<>();
+                eraseData(data, users, noData, listEraser, map);
+                listEraser = listEraser.stream().sorted().collect(Collectors.toList());
+                UserDto changedUser = listEraser.get(listEraser.size() - 1);
+                WorkDatesDto changedDate = map.get(changedUser.getId());
+                if (changedDate!=null) {
+                    int number = Math.toIntExact(changedDate.getCar().getId() - 1);
+                    int numberOfDate = Math.toIntExact(changedDate.getDate().getDayOfMonth() - 1);
+                    SchedulerData dataSh = data.get(number).get(numberOfDate);
+                    dataSh.setDoctor(null);
+                    noData.setDoctor(changedUser);
+                    changedUser.setHonest(changedUser.getHonest() + 2);
+                    changedUser.getWorkDates().remove(changedDate);
 
+                    WorkDatesDto workDates = new WorkDatesDto();
+                    workDates.setDate(noData.getDate());
+                    workDates.setCar(cars.get(noData.getCar() - 1));
+                    changedUser.getWorkDates().add(workDates);
+                }
+            }
 
             phillData(data, users, cars);
+
             a++;
             for (List<SchedulerData> dam : data) {
                 for (SchedulerData dat : dam) {
@@ -55,44 +67,46 @@ public class SchedulerPreparer {
             }
             System.out.println(a);
         }
-        emptyData.get(0).getDay();
+//        emptyData.get(0).getDay();
 
-        return data;
+        return specialUser = users.stream().filter(p -> p.getDuty().equals(Duty.DOCTOR)).sorted().collect(Collectors.toList());
 
     }
 
-    private static void eraseData(List<List<SchedulerData>> data, List<UserDto> users, List<SchedulerData> emptyData, List<UserDto> listEraser) {
-        for (SchedulerData schedulerData : emptyData) {
-            int a = schedulerData.getDay();
-            for (UserDto user : users) {
-                List<WorkDatesDto> workDatesDto = user.getWorkDates();
-                for (int i = 0; i < workDatesDto.size(); i++) {
-                    WorkDatesDto dto = workDatesDto.get(i);
-                    if (((a - dto.getDate().getDayOfMonth()) <= 1 && (dto.getDate().getDayOfMonth() - a) <= -1)
-                            || (((dto.getDate().getDayOfMonth() - a) <= 1) && (a - dto.getDate().getDayOfMonth()) <= 1)) {
-                        if ((a - dto.getDate().getDayOfMonth()) != 0) {
-                            if (((a - workDatesDto.get(i - 1).getDate().getDayOfMonth()) > 2)
-                                    && ((workDatesDto.get(i + 1).getDate().getDayOfMonth() - a) > 2))
-                                listEraser.add(user);
+    private static void eraseData(List<List<SchedulerData>> data, List<UserDto> users, SchedulerData schedulerData
+            , List<UserDto> listEraser, Map<Long, WorkDatesDto> map) {
+
+        int a = schedulerData.getDay();
+        for (UserDto user : users) {
+            List<WorkDatesDto> workDatesDto = user.getWorkDates();
+            for (int i = 0; i < workDatesDto.size(); i++) {
+                WorkDatesDto dto = workDatesDto.get(i);
+                if (((a - dto.getDate().getDayOfMonth()) <= 1 && (dto.getDate().getDayOfMonth() - a) <= -1)
+                        || (((dto.getDate().getDayOfMonth() - a) <= 1) && (a - dto.getDate().getDayOfMonth()) <= 1)) {
+                    if ((a - dto.getDate().getDayOfMonth()) != 0) {
+                        if (((a - workDatesDto.get(i - 1).getDate().getDayOfMonth()) > 2)
+                                && ((workDatesDto.get(i + 1).getDate().getDayOfMonth() - a) > 2))
+                            listEraser.add(user);
+                        map.put(user.getId(), workDatesDto.get(i));
 //                            workDatesDto.remove(dto);
-                        }
-                        break;
                     }
+                    break;
                 }
             }
+        }
 //            for (List<SchedulerData> listData : data) {
 //                List<SchedulerData> listData2 = listData.stream().filter(p -> (p.getDay() == a + 1) || (p.getDay() == a - 1)).collect(Collectors.toList());
 //                for (SchedulerData data1 : listData2) {
 //                    data1.setDoctor(null);
 //                }
 //            }
-        }
+
     }
 
     private static void phillData(List<List<SchedulerData>> data, List<UserDto> users, List<CarDto> cars) {
         List<UserDto> specialUser;
         specialUser = users.stream().filter(p -> p.getDuty().equals(Duty.DOCTOR))
-                .filter(p -> (p.getShift() < 9))
+//                .filter(p -> (p.getShift() < 9))
                 .sorted().collect(Collectors.toList());
         List<SchedulerData> emptyData = getSchedulerData(data);
 

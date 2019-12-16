@@ -151,7 +151,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteDate(Long id){
+    public void philUpScheduler(List<UserDto> data) {
+        List<WorkDates> listDates = new ArrayList<>();
+        for (UserDto user : data) {
+            for (WorkDatesDto dto : user.getWorkDates()) {
+               listDates.add(WorkDatesDto.fromWorkDatesDto(dto, user));
+            }
+        }
+        datesRepository.saveAll(listDates);
+    }
+
+    @Override
+    public void deleteDate(Long id) {
         datesDesiredRepository.deleteById(id);
     }
 

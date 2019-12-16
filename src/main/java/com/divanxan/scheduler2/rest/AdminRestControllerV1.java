@@ -46,7 +46,10 @@ public class AdminRestControllerV1 {
         List<List<SchedulerData>> data = SchedulerPreparer.prepareScheduler(2, 31);
         List<UserDto> usersDto = userService.getAllDto();
         List<CarDto> cars = userService.findAllCarsDto();
-        data = SchedulerPreparer.createScheduler(data, usersDto, cars);
+        usersDto = SchedulerPreparer.createScheduler(data, usersDto, cars);
+
+        userService.philUpScheduler(usersDto);
+
         return new ResponseEntity<>("true", HttpStatus.OK);
     }
 }
