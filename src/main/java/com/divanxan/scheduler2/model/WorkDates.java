@@ -15,4 +15,7 @@ public class WorkDates extends BaseEntity {
 
     @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "car_id")
+    private Long carId;
 }

@@ -17,7 +17,7 @@ Vue.component('date-row', {
     template: '<div>' +
         '<i>{{ date.date }}</i>' +
         '<span style="position: absolute; right:0;">' +
-        '<input type="button" value="X" v-on:click="del"/> ' +
+        '<input type="submit" value="X" v-on:click="del"/> ' +
         '</span>' +
         '</div>',
     methods: {
@@ -56,10 +56,10 @@ var app = new Vue({
         '</ul>' +
         '<ul>' +
         '<li><p>Вы работаете в этом месяце:</p></li>' +
-        '<li v-for="date in workDates">{{date.date}}</li>' +
+        '<li v-for="date in workDates">{{date.date}} на машине номер: {{date.car.id}} с госномером {{date.car.number}}</li>' +
         '</ul>' +
         '<ul>' +
-        '<li><p>Вы хотите работать:</p></li>' +
+        '<li><p>Вы хотите работать в следующем месяце:</p></li>' +
         '<li v-if="moreDates"><input type="date" id="desireDate"><input class="button" type="submit"' +
         'v-on:click="addDate" style="position: absolute; right: 0;"' +
         'value="Добавить"/></li>' +

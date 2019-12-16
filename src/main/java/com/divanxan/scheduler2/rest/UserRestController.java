@@ -1,7 +1,10 @@
 package com.divanxan.scheduler2.rest;
 
 import com.divanxan.scheduler2.dto.AuthenticationRequestDto;
+import com.divanxan.scheduler2.dto.CarDto;
 import com.divanxan.scheduler2.dto.UserDto;
+import com.divanxan.scheduler2.dto.WorkDatesDto;
+import com.divanxan.scheduler2.model.Car;
 import com.divanxan.scheduler2.model.User;
 import com.divanxan.scheduler2.model.WorkDates;
 import com.divanxan.scheduler2.model.WorkDatesDesired;
@@ -10,13 +13,11 @@ import com.divanxan.scheduler2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/users/")
@@ -66,8 +67,22 @@ public class UserRestController {
         }
         User user = userService.findByUsername(userName);
         List<WorkDates> workDates = userService.findDaysById(user.getId());
+        List<Car> cars = userService.findAllCars();
+
+        List<WorkDatesDto> workDatesDto = new ArrayList<>();
+        for (WorkDates dates : workDates) {
+            CarDto carDto = null;
+            for (Car car : cars) {
+                if (car.getId().equals(dates.getCarId())) {
+                    carDto = CarDto.fromCar(car);
+                    break;
+                }
+            }
+            workDatesDto.add(WorkDatesDto.fromWorkDates(dates, carDto));
+        }
+
         List<WorkDatesDesired> workDatesDesireds = userService.findDesiredDaysById(user.getId());
-        UserDto result = UserDto.fromUser(user, workDates, workDatesDesireds);
+        UserDto result = UserDto.fromUser(user, workDatesDto, workDatesDesireds);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -77,8 +92,23 @@ public class UserRestController {
         String userName = jwtTokenProvider.getUsername(token);
         User user = userService.findByUsername(userName);
         List<WorkDates> workDates = userService.findDaysById(user.getId());
+        List<Car> cars = userService.findAllCars();
+
+        List<WorkDatesDto> workDatesDto = new ArrayList<>();
+        for (WorkDates dates : workDates) {
+            CarDto carDto = null;
+            for (Car car : cars) {
+                if (car.getId().equals(dates.getCarId())) {
+                    carDto = CarDto.fromCar(car);
+                    break;
+                }
+            }
+            workDatesDto.add(WorkDatesDto.fromWorkDates(dates, carDto));
+        }
+
         List<WorkDatesDesired> workDatesDesireds = userService.findDesiredDaysById(user.getId());
-        UserDto result = UserDto.fromUser(user, workDates, workDatesDesireds);
+
+        UserDto result = UserDto.fromUser(user, workDatesDto, workDatesDesireds);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

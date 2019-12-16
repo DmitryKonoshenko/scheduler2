@@ -29,9 +29,16 @@ public class User extends BaseEntity {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "honest")
+    private int honest;
+
     @JsonIgnore
     @Column(name = "password")
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "duty")
+    private Duty duty;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",

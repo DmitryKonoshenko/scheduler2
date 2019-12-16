@@ -1,10 +1,10 @@
 package com.divanxan.scheduler2.service.impl;
 
+import com.divanxan.scheduler2.dto.CarDto;
+import com.divanxan.scheduler2.dto.UserDto;
+import com.divanxan.scheduler2.dto.WorkDatesDto;
 import com.divanxan.scheduler2.model.*;
-import com.divanxan.scheduler2.repository.RoleRepository;
-import com.divanxan.scheduler2.repository.UserRepository;
-import com.divanxan.scheduler2.repository.WorkDatesDesiredRepository;
-import com.divanxan.scheduler2.repository.WorkDatesRepository;
+import com.divanxan.scheduler2.repository.*;
 import com.divanxan.scheduler2.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -24,15 +25,17 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final WorkDatesRepository datesRepository;
     private final WorkDatesDesiredRepository datesDesiredRepository;
+    private final CarRepository carRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder
-            , WorkDatesRepository datesRepository, WorkDatesDesiredRepository datesDesiredRepository) {
+            , WorkDatesRepository datesRepository, WorkDatesDesiredRepository datesDesiredRepository, CarRepository carRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.datesRepository = datesRepository;
         this.datesDesiredRepository = datesDesiredRepository;
+        this.carRepository = carRepository;
     }
 
     @Override
@@ -59,6 +62,19 @@ public class UserServiceImpl implements UserService {
         List<User> result = userRepository.findAll();
         log.info("IN getAll - {} users found", result.size());
         return result;
+    }
+
+    @Override
+    public List<UserDto> getAllDto() {
+        List<User> users = getAll();
+        List<UserDto> usersDto = new ArrayList<>();
+        for (User user : users) {
+            List<WorkDatesDto> workDatesDto = findDaysDtoById(user.getId());
+            List<WorkDatesDesired> workDatesDesired = findDesiredDaysById(user.getId());
+            UserDto userDto = UserDto.fromUser(user,workDatesDto,workDatesDesired);
+            usersDto.add(userDto);
+        }
+        return usersDto;
     }
 
     @Override
@@ -92,6 +108,27 @@ public class UserServiceImpl implements UserService {
         }
 
         return result;
+    }
+
+    @Override
+    public List<WorkDatesDto> findDaysDtoById(Long id) {
+        List<WorkDates> dates = findDaysById(id);
+        List<CarDto> carsDto = findAllCarsDto();
+        List<WorkDatesDto> datesDto = dates.stream().map(date -> WorkDatesDto
+                .fromWorkDates(date, carsDto.get(Math.toIntExact(date.getCarId())))).collect(Collectors.toList());
+        return datesDto;
+    }
+
+    @Override
+    public List<Car> findAllCars() {
+        return carRepository.findAll();
+    }
+
+    @Override
+    public List<CarDto> findAllCarsDto() {
+        List<Car> cars = findAllCars();
+        List<CarDto> carsDto = cars.stream().map(CarDto::fromCar).collect(Collectors.toList());
+        return carsDto;
     }
 
     @Override
