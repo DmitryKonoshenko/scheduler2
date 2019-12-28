@@ -17,7 +17,7 @@ Vue.component('date-row', {
     template: '<div>' +
         '<i>{{ date.date }}</i>' +
         '<span style="position: absolute; right:0;">' +
-        '<input type="submit" value="X" v-on:click="del"/> ' +
+        '<input type="submit" value="X" v-on:click="del" class="btn-small"/> ' +
         '</span>' +
         '</div>',
     methods: {
@@ -66,6 +66,15 @@ var app = new Vue({
         '</ul>' +
         '<date-row v-for="date in workDatesDesireds" :key="date.id" ' +
         ':date="date" :workDatesDesireds="workDatesDesireds"/>' +
+        '<ul>' +
+        '<li><p>Введите даты замены смен:</p></li>' +
+        '<li>' +
+        '<label>Желаемая дата работы</label><input type="date" id="desireDate"><input type="submit" value="Добавить" class="button" style="position: absolute; right: 0px;">' +
+        '<div><i>2019-12-20</i><span style="position: absolute; right: 0px;"><input type="submit" value="X" class="btn-small"></span></div>'+
+        '<label>Желаемая дата снятия смены</label><input type="date" id="desireDate"><input type="submit" value="Добавить" class="button" style="position: absolute; right: 0px;">' +
+        '<div><i>2019-12-19</i><span style="position: absolute; right: 0px;"><input type="submit" value="X" class="btn-small"></span></div>'+
+        '</li>' +
+        '</ul>'+
         '</div>' +
         '</div>' +
         ' </div>' +

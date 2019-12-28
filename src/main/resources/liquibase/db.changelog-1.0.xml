@@ -176,6 +176,39 @@
     </changeSet>
 
     <changeSet id="1.0.6" author="konoshenko.dmitrii" dbms="h2">
+        <createTable tableName="workdateschange">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="user_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="datechangein" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="datechangeout" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(25)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1.0.7" author="konoshenko.dmitrii" dbms="h2">
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="user_roles"
                                  constraintName="fk_user_roles_user"
@@ -185,7 +218,7 @@
                                  referencedTableName="users"/>
     </changeSet>
 
-    <changeSet id="1.0.7" author="konoshenko.dmitrii" dbms="h2">
+    <changeSet id="1.0.8" author="konoshenko.dmitrii" dbms="h2">
         <addForeignKeyConstraint baseColumnNames="role_id"
                                  baseTableName="user_roles"
                                  constraintName="fk_user_roles_roles"
@@ -195,7 +228,7 @@
                                  referencedTableName="roles"/>
     </changeSet>
 
-    <changeSet id="1.0.8" author="konoshenko.dmitrii" dbms="h2">
+    <changeSet id="1.0.9" author="konoshenko.dmitrii" dbms="h2">
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="workdates"
                                  constraintName="fk_user_workdates"
@@ -205,7 +238,7 @@
                                  referencedTableName="users"/>
     </changeSet>
 
-    <changeSet id="1.0.9" author="konoshenko.dmitrii" dbms="h2">
+    <changeSet id="1.0.10" author="konoshenko.dmitrii" dbms="h2">
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="workdatesdesired"
                                  constraintName="fk_user_workdatesdesired"
@@ -215,7 +248,17 @@
                                  referencedTableName="users"/>
     </changeSet>
 
-    <changeSet id="1.0.10" author="konoshenko.dmitrii" dbms="h2">
+    <changeSet id="1.0.11" author="konoshenko.dmitrii" dbms="h2">
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="workdateschange"
+                                 constraintName="fk_user_workdateschange"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="1.0.12" author="konoshenko.dmitrii" dbms="h2">
         <addForeignKeyConstraint baseColumnNames="car_id"
                                  baseTableName="workdates"
                                  constraintName="fk_car_workdates"
@@ -225,7 +268,7 @@
                                  referencedTableName="cars"/>
     </changeSet>
 
-    <changeSet id="1.0.11" author="konoshenko.dmitrii" dbms="h2">
+    <changeSet id="1.0.13" author="konoshenko.dmitrii" dbms="h2">
         <sqlFile dbms="h2" path="classpath:liquibase/insert.sql" />
     </changeSet>
 </databaseChangeLog>

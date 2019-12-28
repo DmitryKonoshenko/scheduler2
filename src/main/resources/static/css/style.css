@@ -20,6 +20,14 @@ li {
     padding-top: 2em;
 }
 
+input.btn-small{
+    padding: 1px 5px;
+    font-size: 12px;
+    height:25px;
+    border-radius: 3px;
+    line-height: 8px;
+}
+
 .align-center{
     float:none;
     margin: 0 auto;
