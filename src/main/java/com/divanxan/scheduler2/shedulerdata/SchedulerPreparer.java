@@ -14,7 +14,6 @@ public class SchedulerPreparer {
 
     public static List<UserDto> createScheduler(List<List<SchedulerData>> data, List<UserDto> users, List<CarDto> cars) {
 
-        //TODO забить на копии
         List<UserDto> specialUser = users.stream().filter(p -> p.getDuty().equals(Duty.DOCTOR)).sorted().collect(Collectors.toList());
 
         while (!specialUser.isEmpty()) {
@@ -25,16 +24,12 @@ public class SchedulerPreparer {
 
         phillData(data, users, cars);
         List<SchedulerData> emptyData;
-
-//        emptyData = getSchedulerData(data);
-
         List<UserDto> listEraser = new ArrayList<>();
         boolean end = false;
         int a = 1;
         while (!end) {
             end = true;
             emptyData = getSchedulerData(data);
-            //TODO выбрать правильную замену
             for (SchedulerData noData : emptyData) {
                 Map<Long, WorkDatesDto> map = new HashMap<>();
                 eraseData(data, users, noData, listEraser, map);
@@ -62,14 +57,16 @@ public class SchedulerPreparer {
             a++;
             for (List<SchedulerData> dam : data) {
                 for (SchedulerData dat : dam) {
-                    if (dat.getDoctor() == null) end = false;
+                    if (dat.getDoctor() == null) {
+                        end = false;
+                        break;
+                    }
                 }
             }
             System.out.println(a);
         }
-//        emptyData.get(0).getDay();
 
-        return specialUser = users.stream().filter(p -> p.getDuty().equals(Duty.DOCTOR)).sorted().collect(Collectors.toList());
+        return users.stream().filter(p -> p.getDuty().equals(Duty.DOCTOR)).sorted().collect(Collectors.toList());
 
     }
 
@@ -88,25 +85,16 @@ public class SchedulerPreparer {
                                 && ((workDatesDto.get(i + 1).getDate().getDayOfMonth() - a) > 2))
                             listEraser.add(user);
                         map.put(user.getId(), workDatesDto.get(i));
-//                            workDatesDto.remove(dto);
                     }
                     break;
                 }
             }
         }
-//            for (List<SchedulerData> listData : data) {
-//                List<SchedulerData> listData2 = listData.stream().filter(p -> (p.getDay() == a + 1) || (p.getDay() == a - 1)).collect(Collectors.toList());
-//                for (SchedulerData data1 : listData2) {
-//                    data1.setDoctor(null);
-//                }
-//            }
-
     }
 
     private static void phillData(List<List<SchedulerData>> data, List<UserDto> users, List<CarDto> cars) {
         List<UserDto> specialUser;
         specialUser = users.stream().filter(p -> p.getDuty().equals(Duty.DOCTOR))
-//                .filter(p -> (p.getShift() < 9))
                 .sorted().collect(Collectors.toList());
         List<SchedulerData> emptyData = getSchedulerData(data);
 
@@ -193,17 +181,6 @@ public class SchedulerPreparer {
             }
         }
         if (!isSet) {
-//            for (int i = 0; i < data.size(); i++) {
-//                UserDto dto;
-//                if (priorityUser.getDuty().equals(Duty.DOCTOR)) {
-//                    dto = data.get(0).get(day).getDoctor();
-//                } else if (priorityUser.getDuty().equals(Duty.DRIVER)) {
-//                    dto = data.get(0).get(day).getDriver();
-//                } else {
-//                    dto = data.get(0).get(day).getParamedic();
-//                }
-//                dto.setHonest(dto.getHonest() - 1);
-//            }
             priorityUser.setHonest(priorityUser.getHonest() + data.size());
             priorityUser.getWorkDatesDesireds().remove(0);
         } else {
