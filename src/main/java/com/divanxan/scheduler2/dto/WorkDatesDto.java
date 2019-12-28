@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WorkDatesDto {
+public class WorkDatesDto implements Comparable<WorkDatesDto> {
 
     private Long id;
     private CarDto car;
@@ -36,5 +36,10 @@ public class WorkDatesDto {
         workDates.setCarId(workDatesDto.getCar().getId());
         workDates.setDate(workDatesDto.getDate());
         return workDates;
+    }
+
+    @Override
+    public int compareTo(WorkDatesDto o) {
+        return this.date.compareTo(o.getDate());
     }
 }

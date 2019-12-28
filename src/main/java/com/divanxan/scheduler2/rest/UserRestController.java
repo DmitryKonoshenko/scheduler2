@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/users/")
@@ -53,7 +54,7 @@ public class UserRestController {
         user.setEmail(requestDto.getEmail());
         user.setPassword(requestDto.getPassword());
 
-        user = userService.register(user);
+        userService.register(user);
 
         return ResponseEntity.ok("true");
     }
@@ -80,7 +81,7 @@ public class UserRestController {
             }
             workDatesDto.add(WorkDatesDto.fromWorkDates(dates, carDto));
         }
-
+        workDatesDto = workDatesDto.stream().sorted().collect(Collectors.toList());
         List<WorkDatesDesired> workDatesDesireds = userService.findDesiredDaysById(user.getId());
         UserDto result = UserDto.fromUser(user, workDatesDto, workDatesDesireds);
         return new ResponseEntity<>(result, HttpStatus.OK);
